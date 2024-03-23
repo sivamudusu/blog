@@ -1,0 +1,13 @@
+---
+layout : base.njk
+---
+
+<article class = "main-article">
+    <div class="article-content">
+        <h1>{{ title }}</h1>
+        <p><time datetime="${date}">{{date}}</time></p>
+        <img src={{image}} alt={{imageAlt}}></img>
+
+        {{ content | safe}}
+    </div>
+</article>

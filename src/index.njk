@@ -1,0 +1,29 @@
+---
+title : Dev Talks
+layout : base.njk
+---
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="quote">
+                stay curious
+            </div>
+            <div class='sub-quote'>
+                <p>Discover Stories,Thinking and experties on any topic</p>
+            </div>
+            <div>
+                <a href="/blog/index.html">
+                <button class="main-button">start reading</button>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="featured">
+        <div class="featured-continer">
+            
+            {%- for post in collections.featured | reverse-%}
+                {% include "article-snippet.njk"%}
+            {%- endfor-%}
+        </div>
+    </section>
+ 

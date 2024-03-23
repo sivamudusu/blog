@@ -1,0 +1,15 @@
+---
+title : 'blog'
+layout : base.njk
+---
+
+<div class = "blogs-container">
+    <h1 class="section-title">All Blogs</h1>
+
+    <div class="list-of-blogs">
+        {% for post in collections.post | reverse %}
+            {% include "article-snippet.njk"%}
+        {% endfor %}
+    </div>
+
+</div>

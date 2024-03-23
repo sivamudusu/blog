@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup LinkedIn Oauth with Easy Step by step process</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300&family=Poppins:ital,wght@0,200;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body> 
+    <header class="header">
+        <nav class="mobile-nav">
+            <div class="logo">Dev Talks<i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i></div>
+            <div id="menu" class="menu-toggle" >&#9776;</div>
+            <ul id="nav" class="nav-links" >
+              <li><a href="/index.html">Home</a></li>
+              <li><a href="/blog/index.html">blogs</a></li>
+            </ul>
+          </nav>
+    </header>
+    
+<article class = "main-article">
+    <div class="article-content">
+        <h1>Setup LinkedIn Oauth with Easy Step by step process</h1>
+        <p><time datetime="${date}"></time></p>
+        <img src=/assets/linkedin-oauth-main.png alt=linked in oauth alt></img>
+
+        <p>Setting up OAuth for LinkedIn involves several steps, including creating an application on the LinkedIn Developer portal, obtaining client credentials, configuring your application, and implementing OAuth flow in your code. Here's a step-by-step guide along with example code snippets:</p>
+<h2>Step 2: Configure Your Application</h2>
+<p>Make sure to configure your application settings properly on the LinkedIn Developer portal. For example, set up redirect URLs, permissions, and other necessary configurations.</p>
+<h2>Step 3: Implement OAuth Flow in Your Code</h2>
+<p>Here's a basic example of how to implement OAuth flow in a Node.js application using the passport-linkedin-oauth2 strategy:</p>
+<ol>
+<li>First, install necessary packages:</li>
+</ol>
+<pre><code class="language-bash">    npm install express passport passport-linkedin-oauth2 express-session
+
+</code></pre>
+<ol start="2">
+<li>Create an Express application and configure passport:</li>
+</ol>
+<pre><code class="language-js">const express = require(&quot;express&quot;);
+const passport = require(&quot;passport&quot;);
+const LinkedInStrategy = require(&quot;passport-linkedin-oauth2&quot;).Strategy;
+const session = require(&quot;express-session&quot;);
+
+const app = express();
+
+app.use(
+  session({ secret: &quot;your-secret-key&quot;, resave: true, saveUninitialized: true })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(
+  new LinkedInStrategy(
+    {
+      clientID: LINKEDIN_CLIENT_ID,
+      clientSecret: LINKEDIN_CLIENT_SECRET,
+      callbackURL: &quot;http://localhost:3000/auth/linkedin/callback&quot;,
+      scope: [&quot;r_emailaddress&quot;, &quot;r_liteprofile&quot;],
+    },
+    function (accessToken, refreshToken, profile, done) {
+      // Store user data or perform other actions
+      return done(null, profile);
+    }
+  )
+);
+
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function (obj, done) {
+  done(null, obj);
+});
+
+app.get(&quot;/auth/linkedin&quot;, passport.authenticate(&quot;linkedin&quot;));
+
+app.get(
+  &quot;/auth/linkedin/callback&quot;,
+  passport.authenticate(&quot;linkedin&quot;, { failureRedirect: &quot;/login&quot; }),
+  function (req, res) {
+    // Successful authentication, redirect home.
+    res.redirect(&quot;/&quot;);
+  }
+);
+
+app.listen(3000, () =&gt; {
+  console.log(&quot;Server running on port 3000&quot;);
+});
+</code></pre>
+<ol start="3">
+<li>Make sure to replace LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET with your actual LinkedIn application credentials.</li>
+</ol>
+<p>Start your server and navigate to http://localhost:3000/auth/linkedin to initiate the OAuth flow.</p>
+<p>After successful authentication, LinkedIn will redirect back to your application with an access token. You can then use this token to make requests on behalf of the user.</p>
+
+    </div>
+</article>
+    <section class="footer">
+        <div class="footer-contents">
+            <div class="community">
+                <div class="heading" >
+                    <div>Community</div>
+                </div>
+                <div class="content">
+                    <div>About Us</div>
+                    <div>Community</div>
+                    <div>Careers</div>
+                    <div>Privacy</div>
+                </div>
+                
+            </div>
+            <div class="WorkWith">
+                <div  class="heading">
+                    <div>Work with Us</div>
+                </div>
+                <div class="content">
+                    <div>Careers</div>
+                    <div>Advertise</div>
+                    <div>Authos and Ads</div>
+                    
+                </div>
+            </div>
+            <div class="contact">
+                <div  class="heading">
+                    <div>Contact Us</div>
+                </div>
+                <div class="social">
+                    <div><i class="fa-brands fa-facebook"></i></div>
+                    <div><i class="fa-brands fa-twitter"></i></div>
+                    <div><i class="fa-brands fa-instagram"></i></div>
+                    <div><i class="fa-brands fa-linkedin"></i></div>
+                    
+                </div>
+            </div>
+            <div class="Download">
+                <div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+
+</body>
+</body>
+</html>

@@ -4,8 +4,8 @@ author: M shiva
 tags: ["post", "featured"]
 image: /assets/JWT-Cover.png
 imageAlt: this is img alt
-description: Detailed explaination of JWT authenticatiion with Passport
-keyword: jwt, authentication, passportjs, nodejs
+description: "Detailed explaination of JWT authenticatiion with Passport"
+keywords: [jwt, authentication, passportjs, nodejs]
 ---
 
 # Detailed explaination of JWT authenticatiion with Passport

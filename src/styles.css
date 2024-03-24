@@ -111,7 +111,7 @@ code {
     justify-content: space-between;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.15);
     align-items: center;
-    padding: 1em 5em;
+    padding: 1em 2em;
   }
   li a:hover{
     text-decoration: underline yellowgreen;

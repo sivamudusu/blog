@@ -39,7 +39,6 @@ h1{
 .main-article,article img{
   width: 100%;
   object-fit: cover;
-  border-radius: 1em;
 }
 pre {
   background-color: #1c1c1c;
@@ -203,7 +202,8 @@ code {
     margin: 0;
   }
   .article-content{
-    max-width: 90% !important;
+    margin: 1em 0;
+    max-width:90%;
     padding: 1em;
   }
   .featured-continer{

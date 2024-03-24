@@ -2,7 +2,7 @@
     <a style="text-decoration: none; color: inherit;" href = {{post.url}}>
     <article class="snippet">
         <h1>{{ post.data.title }}</h1>
-        <h4> by {{post.data.author}} {{post.date | postDate}}</h4>
+        <p class="date-author"> by {{post.data.author}} {{post.date | postDate}}</p>
         <img src={{post.data.image}} alt={{post.data.imageAlt}}></img>
         <p>{{post.data.description}}</p>
     </article>

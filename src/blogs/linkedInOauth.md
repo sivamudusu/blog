@@ -20,8 +20,7 @@ Here's a basic example of how to implement OAuth flow in a Node.js application u
 1.  First, install necessary packages:
 
 ```bash
-    npm install express passport passport-linkedin-oauth2 express-session
-
+    $ npm install express passport passport-linkedin-oauth2 express-session
 ```
 
 2.  Create an Express application and configure passport:

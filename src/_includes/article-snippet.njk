@@ -1,10 +1,10 @@
 <div class="single-post">
     <a style="text-decoration: none; color: inherit;" href = {{post.url}}>
     <article class="snippet">
-        <h1>{{ post.data.title }}</h1>
+        <h1 id="snippet-title">{{ post.data.title }}</h1>
         <p class="date-author"> by {{post.data.author}} {{post.date | postDate}}</p>
         <img src={{post.data.image}} alt={{post.data.imageAlt}}></img>
-        <p>{{post.data.description}}</p>
+        {# <p>{{post.data.description}}</p> #}
     </article>
     </a>
 </div>

@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      - POSTGRES_USER=msiva
+      - POSTGRES_PASSWORD=mokshith@123
+      - POSTGRES_DB=bms
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: sivamudusu@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: mokshith@123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres

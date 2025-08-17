@@ -2,7 +2,9 @@
 title: Setup LDAP Auth for a privte NPM registry step by step process.
 author: shiva
 tags: ["post", "featured"]
-image: /assets/npmo-auth-ldap.png
+image: ![image](https://github.com/user-attachments/assets/13b0ca28-600d-4d46-b4fb-f06b2182b582)
+
+
 imageAlt: npm-auth-ldap
 description: this is one of the easisets step by step process to setup linked oauth to your website
 keywords: [verdaccio, authentication, verdaccio-ldap, LDAP]

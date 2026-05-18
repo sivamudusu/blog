@@ -3,7 +3,7 @@
     <article class="snippet">
         <h1 id="snippet-title">{{ post.data.title }}</h1>
         <p class="date-author"> by {{post.data.author}} {{post.date | postDate}}</p>
-        <img src={{post.data.image}} alt={{post.data.imageAlt}}></img>
+        <img src={{post.data.image}} alt={{post.data.imageAlt}} loading="lazy"></img>
         {# <p>{{post.data.description}}</p> #}
     </article>
     </a>

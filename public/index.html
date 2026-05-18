@@ -44,21 +44,24 @@
 
     <title>DevTalks</title>
 
-    <!-- Fonts -->
+    <!-- Fonts with font-display swap for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 
     <!-- Icons -->
     <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
     <link rel="apple-touch-icon" href="/assets/favcon2.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"></noscript>
 
-    <!-- Syntax Highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css">
-
-    <!-- Styles -->
+    <!-- Styles (critical path) -->
     <link rel="stylesheet" href="/styles.css">
+
+    <!-- Syntax Highlighting (non-blocking) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css"></noscript>
 </head>
 <body>
     <header class="header">
@@ -102,7 +105,7 @@
     <article class="snippet">
         <h1 id="snippet-title">Setup LinkedIn Oauth with Easy Step by step process</h1>
         <p class="date-author"> by shiva Feb 20, 2025</p>
-        <img src=/assets/linkedin-oauth-main.png alt=linked in oauth alt></img>
+        <img src=/assets/linkedin-oauth-main.png alt=linked in oauth alt loading="lazy"></img>
         
     </article>
     </a>
@@ -111,7 +114,7 @@
     <article class="snippet">
         <h1 id="snippet-title">HPC User Management with Bright Cluster Manager + Microsoft AD.</h1>
         <p class="date-author"> by shiva Feb 18, 2025</p>
-        <img src=/assets/maxresdefault.jpg alt=HPC_User_Management></img>
+        <img src=/assets/maxresdefault.jpg alt=HPC_User_Management loading="lazy"></img>
         
     </article>
     </a>
@@ -120,7 +123,7 @@
     <article class="snippet">
         <h1 id="snippet-title">Setup LDAP Auth for a privte NPM registry step by step process.</h1>
         <p class="date-author"> by shiva Feb 15, 2025</p>
-        <img src=/assets/npmo-auth-ldap.png alt=npm-auth-ldap></img>
+        <img src=/assets/npmo-auth-ldap.png alt=npm-auth-ldap loading="lazy"></img>
         
     </article>
     </a>
@@ -165,7 +168,8 @@
     </div>
 </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
-    <script src="/theme.js"></script>
+    <!-- Deferred non-critical scripts -->
+    <script defer src="/theme.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
 </body>
 </html>

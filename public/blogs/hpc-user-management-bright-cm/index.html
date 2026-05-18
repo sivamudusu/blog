@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link ></link>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
+    <meta name="descrition" content="HPC User Management with Bright Cluster Manager + Microsoft AD" />
+    <meta name="keywords" content="HPC User Management,Bright Cluster Manager,Microsoft AD">
+    <title>HPC User Management with Bright Cluster Manager + Microsoft AD.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body> 
+    <header class="header">
+        <nav class="mobile-nav">
+            <div class="logo">DevTalks<i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i></div>
+            <div id="menu" class="menu-toggle" >&#9776;</div>
+            <ul id="nav" class="nav-links" >
+              <li><a href="/index.html">Home</a></li>
+              <li><a href="/blog/index.html">blogs</a></li>
+            </ul>
+          </nav>
+    </header>
+    
+<article class = "main-article">
+    <div class="article-content">
+        <h1 id="main-title">HPC User Management with Bright Cluster Manager + Microsoft AD.</h1>
+        <p><time datetime=""></time></p>
+        <img src=![image](https://github.com/user-attachments/assets/13b0ca28-600d-4d46-b4fb-f06b2182b582) alt=HPC_User_Management></img>
+
+        <h3>A Real-World Troubleshooting Guide</h3>
+<blockquote>
+<p><strong>Environment:</strong> Rocky Linux 8 (EL8), Bright Cluster Manager 9.2, Microsoft Active Directory, nslcd + sssd, PAM/LDAP auth stack</p>
+</blockquote>
+<h2>The Problem</h2>
+<p>Users were added to Microsoft AD and given group memberships (including <code>docker</code>) but could <strong>not login to HPC nodes</strong>. Running <code>id &lt;username&gt;</code> on the node returned:</p>
+<pre><code>id: &lt;username&gt;: no such user
+</code></pre>
+<p>Old/existing users resolved fine. New users were completely invisible to the nodes.</p>
+<h2>Step 1 — Identify the Auth Stack</h2>
+<p>Before fixing anything, figure out what's actually managing authentication on the nodes.</p>
+<pre><code class="language-bash"># Check name resolution order
+cat /etc/nsswitch.conf | grep -E &quot;passwd|group|shadow&quot;
+
+# Check running auth-related services
+systemctl list-units --type=service --state=running | \
+  grep -E &quot;sssd|winbind|nslcd|pbis|ldap|centrify|quest|vas&quot;
+
+# Check installed packages
+rpm -qa | grep -E &quot;sssd|samba|winbind|pbis|ldap|nss|pam&quot;
+
+# Check PAM config
+cat /etc/pam.d/system-auth
+</code></pre>
+<h3>What We Found</h3>
+<pre><code># nsswitch.conf
+passwd:   files sss ldap systemd
+shadow:   files sss ldap
+group:    files sss ldap systemd
+
+# Running services
+nslcd.service   → Naming services LDAP client daemon
+sssd.service    → System Security Services Daemon
+
+# Key packages
+sssd-common, sssd-client, sssd-kcm
+nss-pam-ldapd
+openldap, openldap-clients
+cm-libpam, cm-config-ldap-client   ← Bright CM packages!
+</code></pre>
+<p>The presence of <code>cm-libpam</code> and <code>cm-config-ldap-client</code> confirmed this was a <strong>Bright Cluster Manager</strong> managed node. No <code>sssd.conf</code>, no Centrify — Bright manages its own internal OpenLDAP.</p>
+<hr>
+<h2>Step 2 — Understanding Bright CM's Architecture</h2>
+<p>This is the <strong>most important thing</strong> to understand. Bright Cluster Manager runs its own internal OpenLDAP on the head node. The compute/app nodes authenticate against <strong>Bright's LDAP</strong>, not directly against Microsoft AD.</p>
+<pre><code>Microsoft AD                    Bright CM (Head Node)
+(Source of Truth)               (Internal OpenLDAP)
+      │                               │
+      │   NO automatic sync ✗         │
+      │                               │
+   users/groups                  users/groups
+   passwords                     passwords
+   (AD UIDs/GIDs)                (separate copy, own UIDs)
+</code></pre>
+<p><strong>Adding a user in AD is NOT enough.</strong> They must also exist in Bright's user database.</p>
+<hr>
+<h2>Step 3 — Adding the User in Bright CM</h2>
+<p>Connect to the head node and use <code>cmsh</code>:</p>
+<pre><code class="language-bash">cmsh
+
+# Navigate to user management
+user
+
+# List existing users
+list
+
+# Add new user
+add &lt;userid&gt;
+set commonname &quot;common_name&quot;
+set homedirectory /home/users/&lt;userid&gt;
+set shell /bin/bash
+commit
+</code></pre>
+<blockquote>
+<p>⚠️ <strong>Critical:</strong> Do NOT let Bright auto-assign the UID. See Step 5 for why.</p>
+</blockquote>
+<hr>
+<h2>Step 4 — Commit Error: LDAP Group Already Exists</h2>
+<p>When committing a new user, you may hit this error:</p>
+<pre><code>Field       Message
+LDAP        Error: Error performing group ldap_add_ext_s: Already exists.
+            New dn:cn=user_id,ou=Group,dc=cm,dc=cluster
+user        Error: Unable to create a new group for a new user
+</code></pre>
+<p><strong>Why this happens:</strong> A previous failed <code>add</code> + <code>commit</code> left an orphaned private group in Bright's LDAP.</p>
+<h3>Fix — Remove the Orphaned Group</h3>
+<pre><code class="language-bash">cmsh
+group
+show user_id      # confirm it exists
+
+remove user_id
+commit
+
+# Now go back and commit the user
+user
+use user_id
+commit
+</code></pre>
+<p>If the group doesn't appear in cmsh but the error persists, delete it directly from LDAP:</p>
+<pre><code class="language-bash"># Find the exact DN
+ldapsearch -x -H ldap://localhost \
+  -D &quot;cn=cm-ldap-admin,dc=cm,dc=cluster&quot; \
+  -W -b &quot;ou=Group,dc=cm,dc=cluster&quot; \
+  &quot;(cn=user_id)&quot; dn
+
+# Delete it
+ldapdelete -x -H ldap://localhost \
+  -D &quot;cn=cm-ldap-admin,dc=cm,dc=cluster&quot; \
+  -W &quot;cn=user_id,ou=Group,dc=cm,dc=cluster&quot;
+</code></pre>
+<blockquote>
+<p><strong>Prevention:</strong> Always use <code>cmsh → user → remove → commit</code> to cleanly remove users — never delete them any other way, or the private group becomes an orphan.</p>
+</blockquote>
+<hr>
+<h2>Step 5 — UID Mismatch: 4-Digit vs Large Numbers</h2>
+<p>After adding the user, you may notice newly created users get small UIDs (1000, 1001, etc.) while AD users have large UIDs (like <code>658640604</code>).</p>
+<p><strong>Why:</strong></p>
+<table>
+<thead>
+<tr>
+<th>User Type</th>
+<th>UID Source</th>
+<th>Typical Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AD/Centrify users</td>
+<td>AD assigns uidNumber</td>
+<td>100000+ or 600000000+</td>
+</tr>
+<tr>
+<td>Bright-created users</td>
+<td>Bright auto-increments</td>
+<td>1000, 1001, 1002...</td>
+</tr>
+</tbody>
+</table>
+<h3>Consequences of UID Mismatch</h3>
+<ul>
+<li>NFS home directory access issues (files owned by wrong UID)</li>
+<li>Slurm job ownership problems</li>
+<li>File permission conflicts across nodes</li>
+</ul>
+<h3>Fix — Always Set UID to Match AD</h3>
+<p>First find the user's actual AD UID:</p>
+<pre><code class="language-bash"># On a machine with AD/Centrify access
+id user_id
+
+# Or query AD directly
+ldapsearch -H ldap://&lt;AD-DC&gt; \
+  -D &quot;binduser@yourdomain.com&quot; \
+  -W -b &quot;DC=yourdomain,DC=com&quot; \
+  &quot;(sAMAccountName=user_id)&quot; uidNumber gidNumber
+</code></pre>
+<p>Then set it in Bright:</p>
+<pre><code class="language-bash">cmsh
+user
+use user_id
+set uid &lt;AD-UID-number&gt;
+set gid &lt;AD-GID-number&gt;
+commit
+</code></pre>
+<p>Fix home directory ownership after UID change:</p>
+<pre><code class="language-bash">chown -R user_id:user_id /home/users/user_id
+chmod 700 /home/users/user_id
+chmod 700 /home/users/user_id/.ssh
+chmod 600 /home/users/user_id/.ssh/authorized_keys 2&gt;/dev/null
+</code></pre>
+<h3>Standard Procedure — Always Do This When Adding AD Users</h3>
+<pre><code class="language-bash">cmsh
+user
+add &lt;username&gt;
+set commonname &quot;&lt;Full Name&gt;&quot;
+set homedirectory /home/users/&lt;username&gt;
+set uid &lt;UID-from-AD&gt;        # ← ALWAYS set this explicitly
+set gid &lt;GID-from-AD&gt;        # ← ALWAYS set this
+set shell /bin/bash
+commit
+</code></pre>
+<hr>
+<h2>Step 6 — Home Directory Already Exists Warning</h2>
+<p>When committing a user whose home dir already exists on the NFS share:</p>
+<pre><code>Field       Message
+userName    Warning: The directory (/home/users/user_id) already exists,
+            not overwriting it.
+</code></pre>
+<p>This is usually just a <strong>warning, not a fatal error</strong> — Bright skipped skel copy but the user was created. However the <code>.ssh</code> directory may have wrong ownership.</p>
+<pre><code class="language-bash"># Fix ownership
+chown -R user_id:user_id /home/users/user_id
+chmod 700 /home/users/user_id/.ssh
+chmod 600 /home/users/user_id/.ssh/authorized_keys
+</code></pre>
+<hr>
+<h2>Step 7 — Adding Users to Groups (docker, etc.)</h2>
+<h3>Common Mistake</h3>
+<p>Being added to an AD group does NOT carry over to Bright. You must explicitly add the user to groups in Bright's own group database.</p>
+<h3>Correct Command — <code>append members</code></h3>
+<pre><code class="language-bash">cmsh
+
+# Method A — from group side
+group
+use docker
+append members user_id
+commit
+
+# Method B — from user side
+user
+use user_id
+append grouplist docker
+commit
+</code></pre>
+<blockquote>
+<p>⚠️ <strong>Note:</strong> The command is <code>append members</code>, NOT <code>addmember</code> — a common confusion.</p>
+</blockquote>
+<h3>Verify the Group Has the User</h3>
+<pre><code class="language-bash">cmsh -c &quot;group show docker&quot;
+# Should list user_id under members
+</code></pre>
+<hr>
+<h2>Step 8 — Syncing Groups to Nodes</h2>
+<p>After committing group changes in cmsh, nodes may still serve stale data.</p>
+<h3>Force Sync to Node</h3>
+<pre><code class="language-bash"># From head node
+cmsh -c &quot;device; use hpcapps; syncusers&quot;
+
+# If syncusers not available (newer Bright versions)
+cmsh -c &quot;device; use hpcapps; sync&quot;
+</code></pre>
+<h3>Restart nslcd on the Node</h3>
+<pre><code class="language-bash"># On hpcapps as root, or from head node
+ssh root@hpcapps &quot;systemctl restart nslcd &amp;&amp; systemctl restart sssd&quot;
+
+# Verify immediately
+ssh root@hpcapps &quot;getent group docker&quot;
+# Should show: docker:x:&lt;GID&gt;:user_id
+</code></pre>
+<h3>If Group Shows Empty Members</h3>
+<pre><code>docker:x:441:
+</code></pre>
+<p>This means the sync didn't push group members. The fix:</p>
+<pre><code class="language-bash"># Head node
+cmsh -c &quot;device; use hpcapps; syncusers&quot;
+
+# Node
+ssh root@hpcapps &quot;systemctl restart nslcd&quot;
+
+# Verify
+ssh root@hpcapps &quot;getent group docker&quot;
+# Should now show: docker:x:441:user_id
+</code></pre>
+<hr>
+<h2>Step 9 — Docker Permission Denied After Group Add</h2>
+<p>Even after adding to docker group in Bright, users may still get:</p>
+<pre><code>Got permission denied while trying to connect to the Docker daemon socket at
+unix:///var/run/docker.sock
+</code></pre>
+<h3>Diagnosis</h3>
+<pre><code class="language-bash"># Check user's current session groups
+id
+groups
+
+# Check docker socket
+ls -la /var/run/docker.sock
+# Expected: srw-rw---- 1 root docker ...
+
+# Check group on node
+getent group docker
+</code></pre>
+<h3>Cause 1 — Session Not Refreshed</h3>
+<p>The most common cause. Old session doesn't have the new group.</p>
+<pre><code class="language-bash"># Quick fix without re-login
+newgrp docker
+docker ps -a
+
+# Permanent fix
+exit
+ssh user_id@hpcapps
+id    # docker should appear now
+</code></pre>
+<h3>Cause 2 — GID Mismatch Between Bright and Node</h3>
+<p>The docker socket on the node uses the <strong>actual system GID</strong> of the docker group. If you set a different GID in Bright (e.g. 1002) but the real docker GID on the node is 441, the socket won't be accessible.</p>
+<pre><code class="language-bash"># Check actual docker socket GID
+ls -la /var/run/docker.sock       # note GID in output
+getent group docker                # note GID here
+
+# They MUST match
+</code></pre>
+<p>Fix in Bright:</p>
+<pre><code class="language-bash"># Get real GID from node
+ssh root@hpcapps &quot;getent group docker&quot;
+# docker:x:441:  ← real GID is 441
+
+# Fix in cmsh
+cmsh
+group
+use docker
+set gid 441        # ← use the REAL GID from the node
+commit
+
+# Restart nslcd on node
+ssh root@hpcapps &quot;systemctl restart nslcd&quot;
+
+# User re-logs in and tests
+docker ps -a
+</code></pre>
+<hr>
+<h2>Step 10 — Unknown Group ID Warning at Login</h2>
+<pre><code>/usr/bin/id: cannot find name for group ID 658640604
+</code></pre>
+<p>This means the user belongs to an AD group (GID <code>658640604</code>) that <strong>doesn't exist in Bright's LDAP</strong>.</p>
+<h3>Find the Group Name</h3>
+<pre><code class="language-bash">ldapsearch -H ldap://&lt;AD-DC&gt; \
+  -D &quot;binduser@yourdomain.com&quot; \
+  -W -b &quot;DC=yourdomain,DC=com&quot; \
+  &quot;(gidNumber=658640604)&quot; cn name
+</code></pre>
+<h3>Add Missing Group to Bright</h3>
+<pre><code class="language-bash">cmsh
+group
+add &lt;groupname&gt;        # name from ldapsearch above
+set gid 658640604      # must match AD GID exactly
+commit
+</code></pre>
+<p>Check for all unresolved GIDs:</p>
+<pre><code class="language-bash">id user_id
+# Look for any raw numeric GIDs — each one needs to be added to Bright
+</code></pre>
+<hr>
+<h2>Complete Workflow — Adding a New AD User to HPC Nodes</h2>
+<pre><code class="language-bash"># 1. Get user details from AD
+ldapsearch -H ldap://&lt;AD-DC&gt; -D &quot;binduser@domain.com&quot; -W \
+  -b &quot;DC=yourdomain,DC=com&quot; \
+  &quot;(sAMAccountName=&lt;username&gt;)&quot; uidNumber gidNumber cn
+
+# 2. Add user in Bright with matching UID/GID
+cmsh
+user
+add &lt;username&gt;
+set commonname &quot;&lt;Full Name&gt;&quot;
+set homedirectory /home/users/&lt;username&gt;
+set uid &lt;AD-UID&gt;
+set gid &lt;AD-GID&gt;
+set shell /bin/bash
+commit
+
+# 3. Fix home directory ownership
+chown -R &lt;username&gt;:&lt;username&gt; /home/users/&lt;username&gt;
+chmod 700 /home/users/&lt;username&gt;
+
+# 4. Add to required groups (docker, etc.)
+cmsh
+group
+use docker
+append members &lt;username&gt;
+commit
+
+# 5. Ensure docker GID matches the node's actual docker GID
+getent group docker   # on the target node
+cmsh -c &quot;group show docker&quot;   # compare GIDs
+
+# 6. Sync to nodes
+cmsh -c &quot;device; use &lt;nodename&gt;; syncusers&quot;
+ssh root@&lt;nodename&gt; &quot;systemctl restart nslcd&quot;
+
+# 7. Verify on node
+ssh root@&lt;nodename&gt; &quot;id &lt;username&gt;&quot;
+ssh root@&lt;nodename&gt; &quot;getent group docker&quot;
+
+# 8. User logs in fresh and tests
+ssh &lt;username&gt;@&lt;nodename&gt;
+id
+docker ps -a
+</code></pre>
+<hr>
+<h2>Root Cause Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Issue</th>
+<th>Root Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id: no such user</code></td>
+<td>User not in Bright LDAP</td>
+<td>Add via <code>cmsh → user → add</code></td>
+</tr>
+<tr>
+<td>LDAP group already exists</td>
+<td>Orphaned group from failed commit</td>
+<td><code>cmsh → group → remove → commit</code></td>
+</tr>
+<tr>
+<td>Small UID assigned</td>
+<td>Bright auto-increments its own counter</td>
+<td>Always <code>set uid &lt;AD-UID&gt;</code> explicitly</td>
+</tr>
+<tr>
+<td><code>.ssh permission denied</code></td>
+<td>Home dir owned by wrong UID</td>
+<td><code>chown -R username /home/users/username</code></td>
+</tr>
+<tr>
+<td>docker group empty on node</td>
+<td>cmsh changes not synced</td>
+<td><code>syncusers</code> + <code>systemctl restart nslcd</code></td>
+</tr>
+<tr>
+<td>docker permission denied</td>
+<td>Stale session or GID mismatch</td>
+<td>Re-login + verify GID matches socket</td>
+</tr>
+<tr>
+<td>Unknown group ID at login</td>
+<td>AD group missing from Bright</td>
+<td>Add group with matching GID via cmsh</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Why AD Group Membership Doesn't Auto-Sync</h2>
+<p>Bright CM's internal OpenLDAP and Microsoft AD are <strong>completely independent systems</strong>. Unless you configure explicit AD sync (via <code>cmsh → authentication</code>), every user and group must be manually mirrored in Bright.</p>
+<pre><code>Microsoft AD ──── no link ────→ Bright CM OpenLDAP
+   uid: 658640001                  uid: 1001  ← wrong!
+   gid: 658640604                  gid: 1002  ← wrong!
+   groups: docker, hpc-users       groups: (empty)
+</code></pre>
+<h3>Long-Term Fix — Configure AD as Auth Source in Bright</h3>
+<pre><code class="language-bash">cmsh
+authentication
+add ad_sync
+set type activedirectory
+set server &lt;AD-DC-hostname&gt;
+set domain &lt;yourdomain.com&gt;
+set binddn &quot;CN=binduser,CN=Users,DC=yourdomain,DC=com&quot;
+set bindpassword &lt;password&gt;
+set basedn &quot;DC=yourdomain,DC=com&quot;
+commit
+</code></pre>
+<p>This makes AD the <strong>single source of truth</strong> — passwords, UIDs, group memberships all sync automatically.</p>
+<hr>
+<h2>Key Commands Reference</h2>
+<pre><code class="language-bash"># User management
+cmsh -c &quot;user list&quot;
+cmsh -c &quot;user show &lt;username&gt;&quot;
+cmsh -c &quot;user add &lt;username&gt;&quot;
+
+# Group management
+cmsh -c &quot;group list&quot;
+cmsh -c &quot;group show docker&quot;
+cmsh -c &quot;group; use docker; append members &lt;username&gt;; commit&quot;
+
+# Sync nodes
+cmsh -c &quot;device; use &lt;nodename&gt;; syncusers&quot;
+cmsh -c &quot;device; foreach -t node * (syncusers)&quot;
+
+# Node-side verification
+getent passwd &lt;username&gt;
+getent group docker
+id &lt;username&gt;
+
+# Restart auth services on node
+systemctl restart nslcd
+systemctl restart sssd
+
+# LDAP direct query
+ldapsearch -x -H ldap://localhost \
+  -D &quot;cn=cm-ldap-admin,dc=cm,dc=cluster&quot; \
+  -W -b &quot;ou=People,dc=cm,dc=cluster&quot; &quot;(uid=&lt;username&gt;)&quot;
+</code></pre>
+<hr>
+<p><em>This guide was built from real production troubleshooting on a BioMarin HPC environment running Bright Cluster Manager 9.2 on Rocky Linux 8 with Microsoft AD as the identity provider.</em></p>
+
+    </div>
+</article>
+    <section class="footer">
+        <div class="footer-contents">  
+            <div class="contact">
+                <div  class="heading">
+                    <div>Contact</div>
+                </div>
+                <div class="social">
+                    <div><a href="https://github.com/sivamudusu"><i class="fa-brands fa-github"></a></i></div>
+                    <div><a href=""><i class="fa-brands fa-slack"></i></a></div>
+                    <div><a href=""><i class="fa-brands fa-instagram"></i></a></div>
+                    <div><a href="https://www.linkedin.com/in/shiva-mudusu"><i class="fa-brands fa-linkedin"></i></a></div>
+                    
+                </div>
+                <div class="gray">www.devtalkss.netlify.app</div>
+                <div class="gray">  siva mudusu</div>
+            </div>
+           
+        </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+
+</body>
+</body>
+</html>

@@ -2,9 +2,7 @@
 title: HPC User Management with Bright Cluster Manager + Microsoft AD.
 author: shiva
 tags: ["post", "featured"]
-image: ![image](https://github.com/user-attachments/assets/13b0ca28-600d-4d46-b4fb-f06b2182b582)
-
-
+image: "![image](https://github.com/user-attachments/assets/13b0ca28-600d-4d46-b4fb-f06b2182b582)"
 imageAlt: HPC_User_Management
 description: HPC User Management with Bright Cluster Manager + Microsoft AD
 keywords: ["HPC User Management", "Bright Cluster Manager","Microsoft AD"]
@@ -14,7 +12,6 @@ keywords: ["HPC User Management", "Bright Cluster Manager","Microsoft AD"]
 
 > **Environment:** Rocky Linux 8 (EL8), Bright Cluster Manager 9.2, Microsoft Active Directory, nslcd + sssd, PAM/LDAP auth stack
 
----
 
 ## The Problem
 
@@ -26,7 +23,6 @@ id: <username>: no such user
 
 Old/existing users resolved fine. New users were completely invisible to the nodes.
 
----
 
 ## Step 1 — Identify the Auth Stack
 

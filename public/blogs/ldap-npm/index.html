@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link ></link>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
+    <meta name="descrition" content="this is one of the easisets step by step process to setup linked oauth to your website" />
+    <meta name="keywords" content="verdaccio,authentication,verdaccio-ldap,LDAP">
+    <title>Setup LDAP Auth for a privte NPM registry step by step process.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body> 
+    <header class="header">
+        <nav class="mobile-nav">
+            <div class="logo">DevTalks<i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i></div>
+            <div id="menu" class="menu-toggle" >&#9776;</div>
+            <ul id="nav" class="nav-links" >
+              <li><a href="/index.html">Home</a></li>
+              <li><a href="/blog/index.html">blogs</a></li>
+            </ul>
+          </nav>
+    </header>
+    
+<article class = "main-article">
+    <div class="article-content">
+        <h1 id="main-title">Setup LDAP Auth for a privte NPM registry step by step process.</h1>
+        <p><time datetime=""></time></p>
+        <img src=/assets/npmo-auth-ldap.png alt=npm-auth-ldap></img>
+
+        <h1>Detailed explaination of Settimg LDAP authentication for a private npm reistry</h1>
+<h2>Step1 : Run Verdaccio in Docker</h2>
+<ul>
+<li>create docker-compose.yml file
+create a file named docker-compose.yml with the following content</li>
+</ul>
+<pre><code class="language-yml">    version: '3.8'
+    services : 
+        verdaccio : 
+            image : verdaccio/verdaccio
+            container_name : npm
+            labels:
+                port : 4873
+                description : description
+                security : LDAP
+            volumes:
+                - ./storage: /verdaccio/storage
+                - ./conf: /verdaccio/conf
+            restrat : alsways
+
+</code></pre>
+<ul>
+<li>prepare the directories
+create the following directories</li>
+</ul>
+<pre><code class="language-yml">    - config(for verdaccio)
+    - storage(to store packages and metadata)
+</code></pre>
+<ul>
+<li>start the container
+Run the following command</li>
+</ul>
+<pre><code class="language-shell">    docker compose up -d
+</code></pre>
+<h2>step2 : Configure Verdaccio</h2>
+<ul>
+<li>create config.yml
+create a file named config.yml inside the config directory with the following content</li>
+</ul>
+<pre><code class="language-yml">    auth:
+        htpasswd:
+            file: /verdaccio/conf/htpasswd
+            max_users : -1
+    packages:
+        '@your-org/*':
+            acess : $all
+            publish : $all
+            proxy : npmjs
+        '*/*':
+            access : $all
+            publish: $all
+            proxy : npmjs
+
+</code></pre>
+<ul>
+<li>@your-org/* scope allows anyone(trusted via reverse proxy) to access and publish</li>
+<li>No authentiction is configures within the verdaccio</li>
+</ul>
+<h2>step 3 : End User configuration</h2>
+<ul>
+<li>update .npmrc
+Add the following lines to ~/.npmrc</li>
+</ul>
+<pre><code class="language-bash">    registry=https://registry.npmjs.org
+    @your-org:registry=https://your-org.npm
+    //https://your-org.npm/:_auth=&lt;username:passwd(base64 encoded)&gt;
+    email=your-email
+    always-auth=true
+
+</code></pre>
+<h2>step 4 : publish a package</h2>
+<p>Example pakage.json</p>
+<pre><code class="language-json">{
+   &quot;name&quot;:&quot;@yur-org/name&quot;,
+   &quot;version&quot;:&quot;0.0.1&quot;,
+}
+</code></pre>
+<h2>step 5 : Install packages</h2>
+<ul>
+<li>To install packages from your private registry</li>
+</ul>
+<pre><code class="language-bash">    npm i @your-org/component-name
+</code></pre>
+<p>will download compoents from your registry</p>
+<pre><code class="language-bash">    npm i component-name
+</code></pre>
+<p>will download components from default npm registry</p>
+
+    </div>
+</article>
+    <section class="footer">
+        <div class="footer-contents">  
+            <div class="contact">
+                <div  class="heading">
+                    <div>Contact</div>
+                </div>
+                <div class="social">
+                    <div><a href="https://github.com/sivamudusu"><i class="fa-brands fa-github"></a></i></div>
+                    <div><a href=""><i class="fa-brands fa-slack"></i></a></div>
+                    <div><a href=""><i class="fa-brands fa-instagram"></i></a></div>
+                    <div><a href="https://www.linkedin.com/in/shiva-mudusu"><i class="fa-brands fa-linkedin"></i></a></div>
+                    
+                </div>
+                <div class="gray">www.devtalkss.netlify.app</div>
+                <div class="gray">  siva mudusu</div>
+            </div>
+           
+        </div>
+    </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+
+</body>
+</body>
+</html>

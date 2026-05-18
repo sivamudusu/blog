@@ -1,6 +1,7 @@
 ---
 title: Setup LDAP Auth for a privte NPM registry step by step process.
 author: shiva
+date: 2025-02-15
 tags: ["post", "featured"]
 image: /assets/npmo-auth-ldap.png
 imageAlt: npm-auth-ldap

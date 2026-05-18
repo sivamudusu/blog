@@ -1,6 +1,7 @@
 ---
 title: Setup LinkedIn Oauth with Easy Step by step process
 author: shiva
+date: 2025-02-20
 tags: ["post", "featured"]
 image: /assets/linkedin-oauth-main.png
 imageAlt: linked in oauth alt

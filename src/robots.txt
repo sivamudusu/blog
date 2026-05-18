@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+Disallow: /public/
+Disallow: /_includes/
+Disallow: /.git/
+
+Sitemap: https://yoursite.com/sitemap.xml
+
+# Google-specific
+User-agent: Googlebot
+Allow: /
+
+# Bing-specific
+User-agent: Bingbot
+Allow: /
+
+# Additional crawlers
+User-agent: *
+Crawl-delay: 1

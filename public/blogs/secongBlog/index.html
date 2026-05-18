@@ -2,65 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link ></link>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
-    <meta name="descrition" content="some description" />
+    <meta name="description" content="some description">
     <meta name="keywords" content="">
     <title>my second article</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body> 
+<body>
     <header class="header">
-        <nav class="mobile-nav">
-            <div class="logo">DevTalks<i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i></div>
-            <div id="menu" class="menu-toggle" >&#9776;</div>
-            <ul id="nav" class="nav-links" >
-              <li><a href="/index.html">Home</a></li>
-              <li><a href="/blog/index.html">blogs</a></li>
-            </ul>
-          </nav>
-    </header>
+    <div class="header-content">
+        <a href="/" class="logo">
+            <i class="fas fa-code"></i>
+            Blog
+        </a>
+
+        <nav class="nav-center">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/#featured" class="nav-link">Featured</a>
+            <a href="/#all-posts" class="nav-link">Posts</a>
+        </nav>
+
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </div>
+</header>
+
     
-<article class = "main-article">
+<article class="main-article">
     <div class="article-content">
-        <h1 id="main-title">my second article</h1>
-        <p><time datetime="2018-09">2018-09</time></p>
-        <img src=/assets/What-is-JWT_.jpg alt=this is img alt></img>
+        <div class="article-header">
+            <h1 class="article-title">my second article</h1>
+            <div class="article-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <time datetime="2018-09">Invalid DateTime</time>
+                </div>
+                
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Author Name</span>
+                    </div>
+                
+                <div class="meta-item reading-time">
+                    <i class="fas fa-clock"></i>
+                    <span>0 min read</span>
+                </div>
+            </div>
+        </div>
 
-        <p>some random text here goes like all the pages and other stuff will be here for second</p>
+        
+            <img src="/assets/What-is-JWT_.jpg" alt="this is img alt" class="article-featured-image">
+        
 
+        <div class="article-body">
+            <p>some random text here goes like all the pages and other stuff will be here for second</p>
+
+        </div>
     </div>
 </article>
-    <section class="footer">
-        <div class="footer-contents">  
-            <div class="contact">
-                <div  class="heading">
-                    <div>Contact</div>
-                </div>
-                <div class="social">
-                    <div><a href="https://github.com/sivamudusu"><i class="fa-brands fa-github"></a></i></div>
-                    <div><a href=""><i class="fa-brands fa-slack"></i></a></div>
-                    <div><a href=""><i class="fa-brands fa-instagram"></i></a></div>
-                    <div><a href="https://www.linkedin.com/in/shiva-mudusu"><i class="fa-brands fa-linkedin"></i></a></div>
-                    
-                </div>
-                <div class="gray">www.devtalkss.netlify.app</div>
-                <div class="gray">  siva mudusu</div>
-            </div>
-           
-        </div>
-    </section>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
 
-</body>
+    <footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Blog</h4>
+            <a href="/">Home</a>
+            <a href="/#featured">Featured Posts</a>
+            <a href="/#all-posts">All Posts</a>
+        </div>
+
+        <div class="footer-section">
+            <h4>About</h4>
+            <p>A blog about web development, DevOps, and tech tutorials by Shiva Mudusu.</p>
+        </div>
+
+        <div class="footer-section">
+            <h4>Connect</h4>
+            <div class="social-links">
+                <a href="https://github.com/sivamudusu" aria-label="GitHub" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/shiva-mudusu" aria-label="LinkedIn" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://instagram.com" aria-label="Instagram" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Blog. All rights reserved.</p>
+        <p>Made with <span style="color: var(--primary);">❤</span> by Shiva Mudusu</p>
+    </div>
+</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <script src="/theme.js"></script>
 </body>
 </html>

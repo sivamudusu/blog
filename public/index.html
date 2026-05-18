@@ -1,34 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2Z352MQ8QV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2Z352MQ8QV');
+</script>
 <head>
     <meta charset="UTF-8">
-    <link ></link>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
-    <meta name="descrition" content="" />
-    <meta name="keywords" content="">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Discover in-depth tutorials and articles on web development, DevOps, and technology. Expert insights by Shiva Mudusu.">
+    <meta name="keywords" content="web development, devops, programming, tutorials, technology">
+    <meta name="author" content="Shiva Mudusu">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devtalkss.netlify.app/">
+    <meta property="og:title" content="DevTalks">
+    <meta property="og:description" content="Discover in-depth tutorials and articles on web development, DevOps, and technology.">
+    <meta property="og:image" content="https://devtalkss.netlify.app/assets/logo-color.png">
+    <meta property="og:site_name" content="Blog">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://devtalkss.netlify.app/">
+    <meta property="twitter:title" content="DevTalks">
+    <meta property="twitter:description" content="Discover in-depth tutorials and articles on web development, DevOps, and technology.">
+    <meta property="twitter:image" content="https://devtalkss.netlify.app/assets/logo-color.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://devtalkss.netlify.app/">
+
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="Blog RSS Feed" href="/feed.xml">
+
     <title>DevTalks</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Icons -->
+    <link rel="shortcut icon" href="/assets/favcon2.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/assets/favcon2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-tomorrow.min.css">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body> 
+<body>
     <header class="header">
-        <nav class="mobile-nav">
-            <div class="logo">DevTalks<i class="fa-solid fa-magnifying-glass" style="color: #ffffff;"></i></div>
-            <div id="menu" class="menu-toggle" >&#9776;</div>
-            <ul id="nav" class="nav-links" >
-              <li><a href="/index.html">Home</a></li>
-              <li><a href="/blog/index.html">blogs</a></li>
-            </ul>
-          </nav>
-    </header>
+    <div class="header-content">
+        <a href="/" class="logo">
+            <i class="fas fa-code"></i>
+            Blog
+        </a>
+
+        <nav class="nav-center">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/#featured" class="nav-link">Featured</a>
+            <a href="/blog/index.html" class="nav-link">Posts</a>
+        </nav>
+
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </div>
+</header>
+
         <section class="hero-section">
         <div class="hero-container">
             <div class="quote">
@@ -47,29 +98,20 @@
 
     <section id="featured">
         <div class="featured-continer"><div class="single-post">
-    <a style="text-decoration: none; color: inherit;" href = /blogs/hpc-user-management-bright-cm/>
-    <article class="snippet">
-        <h1 id="snippet-title">HPC User Management with Bright Cluster Manager + Microsoft AD.</h1>
-        <p class="date-author"> by shiva May 18, 2026</p>
-        <img src=![image](https://github.com/user-attachments/assets/13b0ca28-600d-4d46-b4fb-f06b2182b582) alt=HPC_User_Management></img>
-        
-    </article>
-    </a>
-</div><div class="single-post">
-    <a style="text-decoration: none; color: inherit;" href = /blogs/firstBlog/>
-    <article class="snippet">
-        <h1 id="snippet-title">Detailed  Information About the MIT License</h1>
-        <p class="date-author"> by M shiva May 18, 2026</p>
-        <img src=/assets/JWT-Cover.png alt=this is img alt></img>
-        
-    </article>
-    </a>
-</div><div class="single-post">
     <a style="text-decoration: none; color: inherit;" href = /blogs/linkedInOauth/>
     <article class="snippet">
         <h1 id="snippet-title">Setup LinkedIn Oauth with Easy Step by step process</h1>
-        <p class="date-author"> by shiva May 18, 2026</p>
+        <p class="date-author"> by shiva Feb 20, 2025</p>
         <img src=/assets/linkedin-oauth-main.png alt=linked in oauth alt></img>
+        
+    </article>
+    </a>
+</div><div class="single-post">
+    <a style="text-decoration: none; color: inherit;" href = /blogs/hpc-user-management-bright-cm/>
+    <article class="snippet">
+        <h1 id="snippet-title">HPC User Management with Bright Cluster Manager + Microsoft AD.</h1>
+        <p class="date-author"> by shiva Feb 18, 2025</p>
+        <img src=/assets/maxresdefault.jpg alt=HPC_User_Management></img>
         
     </article>
     </a>
@@ -77,17 +119,8 @@
     <a style="text-decoration: none; color: inherit;" href = /blogs/ldap-npm/>
     <article class="snippet">
         <h1 id="snippet-title">Setup LDAP Auth for a privte NPM registry step by step process.</h1>
-        <p class="date-author"> by shiva May 18, 2026</p>
+        <p class="date-author"> by shiva Feb 15, 2025</p>
         <img src=/assets/npmo-auth-ldap.png alt=npm-auth-ldap></img>
-        
-    </article>
-    </a>
-</div><div class="single-post">
-    <a style="text-decoration: none; color: inherit;" href = /blogs/secongBlog/>
-    <article class="snippet">
-        <h1 id="snippet-title">my second article</h1>
-        <p class="date-author"> by Author Name Sep 1, 2018</p>
-        <img src=/assets/What-is-JWT_.jpg alt=this is img alt></img>
         
     </article>
     </a>
@@ -95,27 +128,44 @@
     </section>
  
 
-    <section class="footer">
-        <div class="footer-contents">  
-            <div class="contact">
-                <div  class="heading">
-                    <div>Contact</div>
-                </div>
-                <div class="social">
-                    <div><a href="https://github.com/sivamudusu"><i class="fa-brands fa-github"></a></i></div>
-                    <div><a href=""><i class="fa-brands fa-slack"></i></a></div>
-                    <div><a href=""><i class="fa-brands fa-instagram"></i></a></div>
-                    <div><a href="https://www.linkedin.com/in/shiva-mudusu"><i class="fa-brands fa-linkedin"></i></a></div>
-                    
-                </div>
-                <div class="gray">www.devtalkss.netlify.app</div>
-                <div class="gray">  siva mudusu</div>
-            </div>
-           
-        </div>
-    </section>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
 
-</body>
+    <footer class="footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Blog</h4>
+            <a href="/">Home</a>
+            <a href="/#featured">Featured Posts</a>
+            <a href="/#all-posts">All Posts</a>
+        </div>
+
+        <div class="footer-section">
+            <h4>About</h4>
+            <p>A blog about web development, DevOps, and tech tutorials by Shiva Mudusu.</p>
+        </div>
+
+        <div class="footer-section">
+            <h4>Connect</h4>
+            <div class="social-links">
+                <a href="https://github.com/sivamudusu" aria-label="GitHub" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/shiva-mudusu" aria-label="LinkedIn" title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://instagram.com" aria-label="Instagram" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Blog. All rights reserved.</p>
+        <p>Made with <span style="color: var(--primary);">❤</span> by Shiva Mudusu</p>
+    </div>
+</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <script src="/theme.js"></script>
 </body>
 </html>

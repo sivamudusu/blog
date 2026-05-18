@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog - Web Development & DevOps Tutorials</title>
+    <link>https://devtalkss.netlify.app</link>
+    <description>Discover in-depth tutorials and articles on web development, DevOps, and technology by Shiva Mudusu.</description>
+    <language>en-us</language>
+    <atom:link href="https://devtalkss.netlify.app/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Setup LinkedIn Oauth with Easy Step by step process</title>
+      <link>https://devtalkss.netlify.app/blogs/linkedInOauth/</link>
+      <guid>https://devtalkss.netlify.app/blogs/linkedInOauth/</guid>
+      <pubDate>Thu, 20 Feb 2025 05:30:00 +0530</pubDate>
+      <description><![CDATA[
+        this is one of the easisets step by step process to setup linked oauth to your website
+        
+        <img src="https://devtalkss.netlify.app/assets/linkedin-oauth-main.png" alt="linked in oauth alt" />
+        
+      ]]></description>
+      <author>shiva</author>
+      <category>post</category>
+    </item>
+    <item>
+      <title>HPC User Management with Bright Cluster Manager + Microsoft AD.</title>
+      <link>https://devtalkss.netlify.app/blogs/hpc-user-management-bright-cm/</link>
+      <guid>https://devtalkss.netlify.app/blogs/hpc-user-management-bright-cm/</guid>
+      <pubDate>Tue, 18 Feb 2025 05:30:00 +0530</pubDate>
+      <description><![CDATA[
+        HPC User Management with Bright Cluster Manager + Microsoft AD
+        
+        <img src="https://devtalkss.netlify.app/assets/maxresdefault.jpg" alt="HPC_User_Management" />
+        
+      ]]></description>
+      <author>shiva</author>
+      <category>post</category>
+    </item>
+    <item>
+      <title>Setup LDAP Auth for a privte NPM registry step by step process.</title>
+      <link>https://devtalkss.netlify.app/blogs/ldap-npm/</link>
+      <guid>https://devtalkss.netlify.app/blogs/ldap-npm/</guid>
+      <pubDate>Sat, 15 Feb 2025 05:30:00 +0530</pubDate>
+      <description><![CDATA[
+        this is one of the easisets step by step process to setup linked oauth to your website
+        
+        <img src="https://devtalkss.netlify.app/assets/npmo-auth-ldap.png" alt="npm-auth-ldap" />
+        
+      ]]></description>
+      <author>shiva</author>
+      <category>post</category>
+    </item>
+  </channel>
+</rss>

@@ -1,8 +1,9 @@
 ---
 title: HPC User Management with Bright Cluster Manager + Microsoft AD.
 author: shiva
+date: 2025-02-18
 tags: ["post", "featured"]
-image: "![image](https://github.com/user-attachments/assets/13b0ca28-600d-4d46-b4fb-f06b2182b582)"
+image: /assets/maxresdefault.jpg
 imageAlt: HPC_User_Management
 description: HPC User Management with Bright Cluster Manager + Microsoft AD
 keywords: ["HPC User Management", "Bright Cluster Manager","Microsoft AD"]

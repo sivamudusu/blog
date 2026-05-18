@@ -1,0 +1,31 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog - Web Development & DevOps Tutorials</title>
+    <link>https://devtalkss.netlify.app</link>
+    <description>Discover in-depth tutorials and articles on web development, DevOps, and technology by Shiva Mudusu.</description>
+    <language>en-us</language>
+    <atom:link href="https://devtalkss.netlify.app/feed.xml" rel="self" type="application/rss+xml" />
+
+    {%- for post in collections.post | reverse %}
+    <item>
+      <title>{{ post.data.title }}</title>
+      <link>https://devtalkss.netlify.app{{ post.url }}</link>
+      <guid>https://devtalkss.netlify.app{{ post.url }}</guid>
+      <pubDate>{{ post.date | rssDate }}</pubDate>
+      <description><![CDATA[
+        {{ post.data.description or "Check out this article on our blog." }}
+        {% if post.data.image %}
+        <img src="https://devtalkss.netlify.app{{ post.data.image }}" alt="{{ post.data.imageAlt or post.data.title }}" />
+        {% endif %}
+      ]]></description>
+      <author>{{ post.data.author or "Shiva Mudusu" }}</author>
+      <category>{{ post.data.tags[0] }}</category>
+    </item>
+    {%- endfor %}
+  </channel>
+</rss>

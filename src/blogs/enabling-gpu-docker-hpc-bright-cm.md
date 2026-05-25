@@ -1,3 +1,14 @@
+---
+title: Enabling GPU Support for Docker on HPC with Bright Cluster Manager
+author: HPC Infrastructure Team
+date: 2026-05-21
+tags: ["post", "featured"]
+image: /assets/enabling-gpu-docker-hpc.png
+imageAlt: enabling-gpu-docker-hpc-bright-cm
+description: A step-by-step real-world troubleshooting guide to enabling NVIDIA GPU access inside Docker containers on an HPC cluster running Rocky Linux 8, Slurm, and Bright Cluster Manager — covering toolkit installation, driver upgrades, DKMS kernel mismatches, and baking all changes into the Bright software image for on-demand nodes.
+keywords: [nvidia-container-toolkit, GPU, Docker, HPC, Slurm, Bright Cluster Manager, CUDA, DKMS, Rocky Linux, nvidia-driver]
+---
+
 # Enabling GPU Support for Docker on HPC with Bright Cluster Manager
 ### A Real-World Troubleshooting Guide
 

@@ -49,7 +49,7 @@ First, we need to install and configure an OpenSSH server within your WSL distri
   sudo systemctl status ssh
   ```
 ## Step 2: Point Domain Nameservers to Cloudflare
-To get a clean, permanent address (like ssh.sivamudusu.online), Cloudflare needs to manage your custom domain's DNS.
+To get a clean, permanent address (like ssh.yourdomain.online), Cloudflare needs to manage your custom domain's DNS.
 
 - **Add Site to Cloudflare:**
   Log into your Cloudflare Dashboard, click Add a Site, enter your domain name, and select the Free Plan. Cloudflare will provide you with two custom nameservers.
@@ -83,7 +83,7 @@ Instead of opening ports on your home router, we will use Cloudflare's lightweig
 
   ```Shell
   cloudflared tunnel create wsl-server
-  cloudflared tunnel route dns wsl-server ssh.sivamudusu.online
+  cloudflared tunnel route dns wsl-server ssh.yourdomain.online
   ```
 `Note the unique UUID string generated during the tunnel creation stage.`
 
@@ -104,7 +104,7 @@ Creating a localized configuration file ensures your tunnel agent maps inbound d
   credentials-file: /home/shiva/.cloudflared/YOUR-TUNNEL-UUID.json
 
   ingress:
-    - hostname: ssh.sivamudusu.online
+    - hostname: ssh.yourdomain.online
       service: ssh://localhost:2223
     - service: http_status:404
   ```
@@ -130,5 +130,5 @@ To securely connect to your home lab from an isolated environment—such as an A
   Initiate your SSH connection by using an inline ProxyCommand to bridge the protocol cleanly over Cloudflare:
 
   ```Shell
-  ssh shiva@localhost -o ProxyCommand="cloudflared access ssh --hostname ssh.yourdns.com
+  ssh userId@localhost -o ProxyCommand="cloudflared access ssh --hostname ssh.yourdns.com
   ```

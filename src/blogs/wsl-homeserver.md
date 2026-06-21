@@ -4,7 +4,7 @@ title: Turn a Spare Windows Laptop into a Private Server using WSL and Cloudflar
 author: shiva
 date: 2026-06-21
 tags: ["post", "featured"]
-image: /assets/wsl-server-cloudflare.png
+image: /assets/Windows_Home_Server_logo.svg
 imageAlt: wsl-server-cloudflare
 description: A complete, step-by-step guide to converting a spare Windows laptop into a globally accessible Linux server using WSL and Cloudflare Tunnels without opening router ports.
 keywords: [wsl, cloudflare-tunnels, server, ssh, windows-subsystem-for-linux, home-lab]
